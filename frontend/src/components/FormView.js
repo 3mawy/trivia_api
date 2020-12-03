@@ -11,7 +11,13 @@ class FormView extends Component {
       answer: "",
       difficulty: 1,
       category: 1,
-      categories: {}
+      categories: {},
+      errors: {
+        question: "",
+        answer: "",
+        difficulty: "",
+        category: "",
+      }
     }
   }
 
@@ -20,7 +26,7 @@ class FormView extends Component {
       url: `/categories`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        this.setState({ categories: result.categories })
+        this.setState({ categories: result.categories.map(category => category.type) })
         return;
       },
       error: (error) => {
@@ -59,11 +65,59 @@ class FormView extends Component {
     })
   }
 
+  validateForm = (errors) => {
+    let valid = true;
+    Object.values(errors).forEach(
+      // if we have an error string set valid to false
+      (val) => val.length > 0 && (valid = false)
+    );
+    return valid;
+  }
+
   handleChange = (event) => {
-    this.setState({[event.target.name]: event.target.value})
+    event.preventDefault();
+    const { name, value } = event.target;
+    let errors = this.state.errors;
+
+    switch (name) {
+      case 'question':
+        errors.question =
+          value.length < 1
+            ? 'empty question field is not valid!'
+            : '';
+        break;
+        case 'answer':
+          errors.answer =
+            value.length < 1
+              ? 'empty answer field is not valid!'
+              : '';
+        break;
+        case 'difficulty':
+          errors.difficulty =
+            value.length < 1
+              ? 'empty difficulty field is not valid!'
+              : '';
+        break;
+        case 'category':
+          errors.category =
+            value.length < 1
+              ? 'empty category field is not valid!'
+              : '';
+        break;
+        default:
+        break;
+    }
+
+    this.setState({errors, [name]: value}, ()=> {
+        console.log(errors)
+
+    })
+        this.setState({[event.target.name]: event.target.value})
+
   }
 
   render() {
+    const {errors} = this.state;
     return (
       <div id="add-form">
         <h2>Add a New Trivia Question</h2>
@@ -71,10 +125,12 @@ class FormView extends Component {
           <label>
             Question
             <input type="text" name="question" onChange={this.handleChange}/>
+            <br/>{errors.question.length > 0 && <span style={{color: "red", fontSize: '10px'}} className='error'>{errors.question}</span>}
           </label>
           <label>
             Answer
             <input type="text" name="answer" onChange={this.handleChange}/>
+            <br/>{errors.answer.length > 0 && <span style={{color: "red", fontSize: '10px'}} className='error'>{errors.answer}</span>}
           </label>
           <label>
             Difficulty
