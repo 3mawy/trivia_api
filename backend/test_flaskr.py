@@ -19,6 +19,7 @@ class TriviaTestCase(unittest.TestCase):
         setup_db(self.app, self.database_path)
 
         self.new_question = {
+            'id': 55,
             'question': 'test question',
             'answer': 'test answer',
             'difficulty': 2,
@@ -68,16 +69,16 @@ class TriviaTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
         self.assertEqual(data['message'], 'Not Found')
 
-    # def test_delete_question(self):
-    #     res = self.client().delete('/questions/9')
-    #     data = json.loads(res.data)
-    #     question = Question.query.get(9)
-    #
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertTrue(data['success'])
-    #     self.assertEqual(data['message'], 'Question Deleted')
-    #     self.assertTrue(data['deleted'])
-    #     self.assertIsNone(question)
+    def test_delete_question(self):
+        res = self.client().delete('/questions/9')
+        data = json.loads(res.data)
+        question = Question.query.get(9)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['message'], 'Question Deleted')
+        self.assertTrue(data['deleted'])
+        self.assertIsNone(question)
 
     def test_404_delete_question_does_not_exist(self):
         res = self.client().delete('/questions/400')
@@ -92,11 +93,12 @@ class TriviaTestCase(unittest.TestCase):
     def test_add_question(self):
         res = self.client().post('/questions', json=self.new_question)
         data = json.loads(res.data)
-
+        question = Question.query.get(self.new_question['id'])
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
         self.assertEqual(data['message'], 'Question Added')
         self.assertIsNotNone(data['created'])
+        self.assertIsNone(question)
 
     def test_422_question_missing_fields(self):
         res = self.client().post('/questions', json=self.invalid_new_question)
@@ -162,10 +164,13 @@ class TriviaTestCase(unittest.TestCase):
 
         ##500
 
-        """
-    TODO
-    Write at least one test for each test for successful operation and for expected errors.
-    """
+    def test_question_quiz(self):
+        res = self.client().post('/quizzes', json={'previous_questions': [], 'quiz_category': {'type': 'Art', 'id': '2'}})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertIsNotNone(data['question'])
 
 
 # Make the tests conveniently executable
