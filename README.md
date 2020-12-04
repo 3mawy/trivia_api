@@ -74,23 +74,16 @@ The Api will return three error types on failed requests:
 ### GET '/categories'
 
 - description
-    - returns a list of available categories and a success value
-    
-- sample request: curl http://127.0.0.1:5000/categories
-  
-        {
-          "categories": [
-            {
-              "id": 1, 
-              "type": "Science"
-            }, 
-            {
-              "id": 2, 
-              "type": "Art"
-            }
-          ], 
-          "success": true
-        }
+  - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+  - Request Arguments: None
+  - Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
+
+        {'1' : "Science",
+        '2' : "Art",
+        '3' : "Geography",
+        '4' : "History",
+        '5' : "Entertainment",
+        '6' : "Sports"}
 
 
 ### GET '/questions'
@@ -261,7 +254,7 @@ The Api will return three error types on failed requests:
         }
 
 
-### POST 'quizzes'
+### POST '/quizzes'
 
 - description
     - takes a previous_questions attribute, and a quiz category ojb. 
@@ -281,13 +274,3 @@ The Api will return three error types on failed requests:
         }
 
 
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
