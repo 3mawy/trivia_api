@@ -34,10 +34,14 @@ def create_app(test_config=None):
     @app.route('/categories', methods=['GET'])
     def get_categories():
         categories = Category.query.order_by(Category.id).all()
-        formatted_categories = [cat.format() for cat in categories]
+
+        my_dic = {}
+        for cat in categories:
+            my_dic[cat.id] = cat.type
+
         return jsonify({
             'success': True,
-            'categories': formatted_categories
+            'categories': my_dic
         })
 
     @app.route('/questions', methods=['GET'])
@@ -45,7 +49,9 @@ def create_app(test_config=None):
 
         questions = Question.query.order_by(Question.id).all()
         categories = Category.query.order_by(Category.id).all()
-        formatted_categories = [cat.format() for cat in categories]
+        formatted_categories = {}
+        for cat in categories:
+            formatted_categories[cat.id] = cat.type
         current_questions = paginate_questions(request, questions)
         if len(current_questions) == 0:
             abort(404)
@@ -55,7 +61,7 @@ def create_app(test_config=None):
             'questions': current_questions,
             'total_questions': len(questions),
             'categories': formatted_categories,
-            'current_category': '',
+            'current_category': 2,
         })
 
     '''
@@ -96,8 +102,8 @@ def create_app(test_config=None):
         difficulty = body.get('difficulty', None)
         category = body.get('category', None)
         if len(question) is 0 or len(answer) is 0 or difficulty is None or category is None:
-            error = 422
-            abort(error)
+            print("question 422")
+            abort(422)
         try:
             question = Question(question=question, answer=answer,
                                 difficulty=difficulty, category=category)
@@ -108,10 +114,7 @@ def create_app(test_config=None):
                 'created': question.id
             })
         except:
-            if error == 422:
-                abort(422)
-            else:
-                abort(500)
+            abort(500)
         return app
 
     @app.route('/questions/search', methods=['POST'])
@@ -127,6 +130,12 @@ def create_app(test_config=None):
             if len(questions) == 0:
                 error = 404
                 abort(error)
+            return jsonify({
+                'success': True,
+                'questions': current_questions,
+                'total_questions': len(questions),
+                'current_category': ''
+            })
         except:
             if error == 404:
                 abort(404)
@@ -134,12 +143,6 @@ def create_app(test_config=None):
                 abort(422)
             else:
                 abort(500)
-        return jsonify({
-            'success': True,
-            'questions': current_questions,
-            'total_questions': len(questions),
-            'current_category': ''
-        })
 
     @app.route('/categories/<int:category_id>/questions', methods=['GET'])
     def get_questions_by_category(category_id):
@@ -147,17 +150,17 @@ def create_app(test_config=None):
             category = Category.query.get(category_id)
             questions = Question.query.filter_by(category=category.id).all()
             current_questions = paginate_questions(request, questions)
+            return jsonify({
+                'success': True,
+                'questions': current_questions,
+                'total_questions': len(questions),
+                'current_category': category.id
+            })
         except:
             if category is None:
                 abort(404)
             else:
                 abort(500)
-        return jsonify({
-            'success': True,
-            'questions': current_questions,
-            'total_questions': len(questions),
-            'current_category': category.id
-        })
 
     @app.route('/quizzes', methods=['POST'])
     def play_game():

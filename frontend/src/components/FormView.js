@@ -26,7 +26,7 @@ class FormView extends Component {
       url: `/categories`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        this.setState({ categories: result.categories.find(category => category.type) })
+        this.setState({ categories: result.categories })
         return;
       },
       error: (error) => {
