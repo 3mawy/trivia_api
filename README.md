@@ -42,4 +42,252 @@ The `./frontend` directory contains a complete React frontend to consume the dat
 Pay special attention to what data the frontend is expecting from each API response to help guide how you format your API. 
 
 [View the README.md within ./frontend for more details.](./frontend/README.md)
-# trivia_api
+
+
+# Trivia Api Reference
+
+## Getting Started
+
+- Local ENV, Hosted by default at http://127.0.0.1:5000/
+- Authentication: No Authentication required yet
+
+## Error Handling
+
+Errors are returned as JSON objects in the following format:
+
+    {
+        "success": False,
+        "error": 404,
+        "messege": "Not Found"
+    }
+
+The Api will return three error types on failed requests:
+
+- 400: Bad Request
+- 404: Not Found
+- 405: Not Allowed
+- 422: Unprocessable Entity
+- 500: Internal Server Error
+
+## Api Endpoints
+
+### GET '/categories'
+
+- description
+    - returns a list of available categories and a success value
+    
+- sample request: curl http://127.0.0.1:5000/categories
+  
+        {
+          "categories": [
+            {
+              "id": 1, 
+              "type": "Science"
+            }, 
+            {
+              "id": 2, 
+              "type": "Art"
+            }
+          ], 
+          "success": true
+        }
+
+
+### GET '/questions'
+
+- description
+    - returns a list of questions, success value, total questions value, list of categories and the current category
+    - the result is paginated with 10 questions a page, include a request argument of the page's number starting from 1 '?page=1'
+
+- sample request: curl http://127.0.0.1:5000/questions
+  
+        {
+          "categories": [
+            {
+              "id": 1, 
+              "type": "Science"
+            }, 
+            {
+              "id": 2, 
+              "type": "Art"
+            }
+          ], 
+          "current_category": "", 
+          "questions": [
+            {
+              "answer": "Apollo 13", 
+              "category": 5, 
+              "difficulty": 4, 
+              "id": 2, 
+              "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+            }, 
+            {
+              "answer": "Tom Cruise", 
+              "category": 5, 
+              "difficulty": 4, 
+              "id": 4, 
+              "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+            }
+          ], 
+          "success": true, 
+          "total_questions": 19
+        }
+
+
+### DELETE '/questions/<question_id>'
+
+- description
+    - deletes a question with a given ID if it exists, returns the id of the deleted question, success value, and a message
+    
+- sample request: curl -X DELETE http://127.0.0.1:5000/questions/2
+  
+        {
+          "deleted": 2, 
+          "message": "Question Deleted", 
+          "success": true
+        }
+
+
+### POST '/questions'
+
+- description
+    - adds a new question to the database, returns the created question id, success value, and a message
+
+- sample request: curl -X POST http://127.0.0.1:5000/questions -H "Content-Type: application/json" -d '{"question":"test question", "answer":"test answer", "difficulty":"2", "category":"2", }'
+  
+        {
+          "created": 2, 
+          "message": "Question Added", 
+          "success": true
+        }
+
+
+### POST '/questions/search'
+
+- description
+    - returns a list of questions with matching searchTerm, success value, the current category, and total questions
+    - the result is paginated with 10 questions a page, include a request argument of the page's number starting from 1 '?page=1'
+
+- sample request: curl -X POST http://127.0.0.1:5000/questions/search -H "Content-Type: application/json" -d '{"searchTerm":"what" }'
+  
+        {
+          "current_category": "", 
+          "questions": [
+            {
+              "answer": "Muhammad Ali", 
+              "category": 4, 
+              "difficulty": 1, 
+              "id": 9, 
+              "question": "What boxer's original name is Cassius Clay?"
+            }, 
+            {
+              "answer": "Apollo 13", 
+              "category": 5, 
+              "difficulty": 4, 
+              "id": 2, 
+              "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+            }, 
+            {
+              "answer": "Tom Cruise", 
+              "category": 5, 
+              "difficulty": 4, 
+              "id": 4, 
+              "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+            }, 
+            {
+              "answer": "Edward Scissorhands", 
+              "category": 5, 
+              "difficulty": 3, 
+              "id": 6, 
+              "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+            }, 
+            {
+              "answer": "Lake Victoria", 
+              "category": 3, 
+              "difficulty": 2, 
+              "id": 13, 
+              "question": "What is the largest lake in Africa?"
+            }, 
+        
+          ], 
+          "success": true, 
+          "total_questions": 5
+        }
+        
+
+
+### GET '/categories/<category_id>/questions'
+
+- description
+    - returns a list of questions filtered by category, success value, total questions value, list of categories and the current category
+    - the result is paginated with 10 questions a page, include a request argument of the page's number starting from 1 '?page=1'
+
+- sample request: curl http://127.0.0.1:5000/categories/2/questions
+      
+        {
+          "current_category": 2, 
+          "questions": [
+            {
+              "answer": "Escher", 
+              "category": 2, 
+              "difficulty": 1, 
+              "id": 16, 
+              "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+            }, 
+            {
+              "answer": "Mona Lisa", 
+              "category": 2, 
+              "difficulty": 3, 
+              "id": 17, 
+              "question": "La Giaconda is better known as what?"
+            }, 
+            {
+              "answer": "One", 
+              "category": 2, 
+              "difficulty": 4, 
+              "id": 18, 
+              "question": "How many paintings did Van Gogh sell in his lifetime?"
+            }, 
+            {
+              "answer": "Jackson Pollock", 
+              "category": 2, 
+              "difficulty": 2, 
+              "id": 19, 
+              "question": "Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?"
+            }
+          ], 
+          "success": true, 
+          "total_questions": 4
+        }
+
+
+### POST 'quizzes'
+
+- description
+    - takes a previous_questions attribute, and a quiz category ojb. 
+    - returns a question object,  success value
+
+- sample request: curl -X POST http://127.0.0.1:5000/quizzes  -H "Content-Type: application/json" -d '{"previous_questions":[], "quiz_category":{"type":"Geography","id":"2"}}'
+
+        {
+          "question": {
+            "answer": "Escher", 
+            "category": 2, 
+            "difficulty": 1, 
+            "id": 16, 
+            "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+          }, 
+          "success": true
+        }
+
+
+GET '/categories'
+- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+- Request Arguments: None
+- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
+{'1' : "Science",
+'2' : "Art",
+'3' : "Geography",
+'4' : "History",
+'5' : "Entertainment",
+'6' : "Sports"}
